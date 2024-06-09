@@ -9,5 +9,6 @@ import { CacheService } from 'src/cache/cache.service';
   imports: [HttpModule, CacheModule.register()],
   controllers: [TokenController],
   providers: [TokenService, CacheService],
+  exports: [TokenService],
 })
 export class TokenModule {}

@@ -1,11 +1,11 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
-import { CreateTokenDto } from './dto/create-token.dto';
-import { TokenService } from './token.service';
+import { Body, Controller, Post } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import {
   CurrentUser,
   IUserJwt,
 } from 'src/common/decorators/current-user.decorators';
+import { CreateTokenDto } from './dto/create-token.dto';
+import { TokenService } from './token.service';
 
 @Controller({
   version: '1',
@@ -22,10 +22,5 @@ export class TokenController {
     @CurrentUser() userData: IUserJwt,
   ) {
     return this.tokenService.create(userData.id, createTokenDto);
-  }
-
-  @Get()
-  findAll() {
-    return this.tokenService.findAll();
   }
 }

@@ -2,10 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { CreatePortfolioDto } from './dto/create-portfolio.dto';
 import { UpdatePortfolioDto } from './dto/update-portfolio.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { TokenService } from 'src/token/token.service';
 
 @Injectable()
 export class PortfolioService {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly tokenSerivce: TokenService,
+  ) {}
 
   async create(userId: string, createPortfolioDto: CreatePortfolioDto) {
     const result = await this.prismaService.portfolio.create({
@@ -27,7 +31,7 @@ export class PortfolioService {
   }
 
   async findOne(userId: string, id: string) {
-    const response = await this.prismaService.portfolio.findUnique({
+    const portDat = await this.prismaService.portfolio.findUnique({
       where: {
         id: id,
         created_by: userId,
@@ -36,7 +40,20 @@ export class PortfolioService {
         Coins: true,
       },
     });
-    return response;
+    const coins = await Promise.all(
+      portDat.Coins.map(async (coinData) => {
+        const _coinData = { ...coinData, coinData: null };
+        _coinData.coinData = await this.tokenSerivce.getCoinData(
+          userId,
+          portDat.id,
+          coinData.network_id,
+          coinData.address,
+        );
+        return _coinData;
+      }),
+    );
+    portDat.Coins = coins;
+    return portDat;
   }
 
   async update(

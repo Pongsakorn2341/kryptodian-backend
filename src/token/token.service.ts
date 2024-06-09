@@ -1,6 +1,6 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger } from '@nestjs/common';
-import { ConfigService, ConfigModule } from '@nestjs/config';
+import { ConfigService } from '@nestjs/config';
 import { AxiosRequestConfig } from 'axios';
 import { firstValueFrom } from 'rxjs';
 import { CacheService } from 'src/cache/cache.service';
@@ -9,13 +9,12 @@ import {
   IGeckoNetwork,
   IGeckoNetworkResponse,
 } from 'src/common/types/coin-gecko/network';
-import { CreateTokenDto } from './dto/create-token.dto';
-import { UpdateTokenDto } from './dto/update-token.dto';
-import { PrismaService } from 'src/prisma/prisma.service';
 import {
   IGeckoToken,
   IGeckoTokenResponse,
 } from 'src/common/types/coin-gecko/token';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { CreateTokenDto } from './dto/create-token.dto';
 
 @Injectable()
 export class TokenService {
@@ -40,7 +39,7 @@ export class TokenService {
     },
   };
 
-  private async getCoinData(
+  async getCoinData(
     userId: string,
     portfolioId: string,
     networkId: string,
@@ -56,7 +55,8 @@ export class TokenService {
       this.httpService.get<IGeckoTokenResponse>(url, this.axiosConfig),
     );
     const res = getCoinData?.data?.data;
-    await this.cacheService.setCache(tokenCacheKey, res);
+    const cacheTTL = 5 * 60 * 1000;
+    await this.cacheService.setCache(tokenCacheKey, res, cacheTTL);
 
     const coinData = await this.prismaService.coin.findFirst({
       where: {
@@ -131,23 +131,8 @@ export class TokenService {
       this.httpService.get<IGeckoNetworkResponse>(url, this.axiosConfig),
     );
     const result = response.data.data;
-    await this.cacheService.setCache(cacheName, result);
+    const cacheTTL = 1 * 60 * 60 * 1000;
+    await this.cacheService.setCache(cacheName, result, cacheTTL);
     return result;
-  }
-
-  findAll() {
-    return `This action returns all token`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} token`;
-  }
-
-  update(id: number, updateTokenDto: UpdateTokenDto) {
-    return `This action updates a #${id} token`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} token`;
   }
 }
