@@ -5,4 +5,5 @@ export const JoiValidation = Joi.object({
     .valid('development', 'staging', 'production')
     .default('development'),
   DATABASE_URL: Joi.string().required(),
+  PORT: Joi.number().port().default(3333),
 });
