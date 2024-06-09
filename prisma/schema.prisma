@@ -40,22 +40,23 @@ model User {
 
   is_active Boolean @default(true)
 
-  created_at       DateTime           @default(now())
-  updated_at       DateTime           @updatedAt
-  CryptoCurrencies CryptoCurrencies[]
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  Coins      Coin[]
 
   @@index([status, email, is_active])
   @@map("user")
 }
 
-model CryptoCurrencies {
+model Coin {
   id            String  @id @default(uuid())
   thumbnail_url String
   name          String
   description   String?
 
-  network_id String
-  address    String
+  reference_id String
+  network_id   String
+  address      String
 
   created_by String
 
@@ -64,7 +65,27 @@ model CryptoCurrencies {
 
   Creator User @relation(fields: [created_by], references: [id])
 
-  @@map("crypto_currencies")
+  @@map("coin")
+}
+
+model Portfolio {
+  id   String @id @default(uuid())
+  name String
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@map("portfolio")
+}
+
+model Transaction {
+  id   String @id @default(uuid())
+  name String
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@map("transaction")
 }
 
 model DataProvider {
