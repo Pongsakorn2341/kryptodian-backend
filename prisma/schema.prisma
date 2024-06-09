@@ -24,6 +24,11 @@ enum EUserStatus {
   COMMERCIAL
 }
 
+enum EDataProvider {
+  COIN_GECKO
+  COIN_MARKET_CAP
+}
+
 model User {
   id            String      @id @default(uuid())
   email         String      @unique
@@ -35,9 +40,40 @@ model User {
 
   is_active Boolean @default(true)
 
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  created_at       DateTime           @default(now())
+  updated_at       DateTime           @updatedAt
+  CryptoCurrencies CryptoCurrencies[]
 
   @@index([status, email, is_active])
   @@map("user")
+}
+
+model CryptoCurrencies {
+  id            String  @id @default(uuid())
+  thumbnail_url String
+  name          String
+  description   String?
+
+  network_id String
+  address    String
+
+  created_by String
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  Creator User @relation(fields: [created_by], references: [id])
+
+  @@map("crypto_currencies")
+}
+
+model DataProvider {
+  id   String        @id @default(uuid())
+  name String
+  type EDataProvider @default(COIN_GECKO)
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@map("data_provider")
 }
