@@ -64,6 +64,10 @@ export class AllExceptionsFilter implements ExceptionFilter {
         );
       }
       const exceptionResponse = exception.getResponse();
+      console.log(
+        '🚀 ~ AllExceptionsFilter ~ exceptionResponse:',
+        exceptionResponse,
+      );
       if (
         exceptionResponse instanceof Object &&
         'message' in exceptionResponse &&

@@ -53,12 +53,20 @@ export const handleError = (
     const errorObject = (axiosError?.response?.data ?? {}) as any;
     logger.fatal(`Axios Error : ${axiosError.code}`);
     logger.error(errorObject);
-    response.message =
-      typeof errorObject == 'string'
-        ? errorObject
-        : typeof axiosError.message == 'string'
-        ? String(axiosError.message)
-        : axiosError.message;
+    const geckoError = (errorObject as any)?.status?.error_message;
+    console.log('🚀 ~ geckoError:', geckoError);
+    if (typeof geckoError == 'string') {
+      response.cause = geckoError;
+    } else {
+      response.message =
+        typeof errorObject == 'string'
+          ? errorObject
+          : typeof axiosError.message == 'string'
+          ? String(axiosError.message)
+          : typeof (axiosError.status as any)?.error_message == 'string'
+          ? (axiosError.status as any)?.error_message
+          : 'unknown';
+    }
     response.code = axiosError.response?.status || 400;
 
     if (typeof errorObject == 'object' && 'detail' in errorObject) {
