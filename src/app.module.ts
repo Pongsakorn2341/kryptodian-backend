@@ -1,14 +1,14 @@
+import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { APP_FILTER, APP_GUARD, HttpAdapterHost } from '@nestjs/core';
+import { JwtModule } from '@nestjs/jwt';
+import { ThrottlerModule } from '@nestjs/throttler';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { EnvConfigProps, envConfigObject } from './common/config/env.config';
 import { TokenModule } from './token/token.module';
-import { ThrottlerModule } from '@nestjs/throttler';
-import { APP_FILTER, APP_GUARD, HttpAdapterHost } from '@nestjs/core';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { envConfigObject } from './common/config/env.config';
 import { JoiValidation } from './common/config/env.validation';
-import { HttpModule } from '@nestjs/axios';
-import { JwtModule } from '@nestjs/jwt';
 
 const configOptionForRoot = {
   load: [envConfigObject],
@@ -19,10 +19,10 @@ const configOptionForRoot = {
 @Module({
   imports: [
     JwtModule.registerAsync({
-      useFactory: (configService: ConfigService) => {
+      useFactory: (configService: ConfigService<EnvConfigProps>) => {
         return {
           global: true,
-          secret: configService.get<string>('envConfig.jwt_secret'),
+          secret: configService.get<string>('envConfig.JWT_SECRET'),
         };
       },
       inject: [ConfigService],
