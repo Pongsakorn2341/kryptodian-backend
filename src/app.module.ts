@@ -4,17 +4,31 @@ import { AppService } from './app.service';
 import { TokenModule } from './token/token.module';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { APP_FILTER, APP_GUARD, HttpAdapterHost } from '@nestjs/core';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { envConfigObject } from './common/config/env.config';
 import { JoiValidation } from './common/config/env.validation';
 import { HttpModule } from '@nestjs/axios';
+import { JwtModule } from '@nestjs/jwt';
+
+const configOptionForRoot = {
+  load: [envConfigObject],
+  cache: true,
+  isGlobal: true,
+};
 
 @Module({
   imports: [
+    JwtModule.registerAsync({
+      useFactory: (configService: ConfigService) => {
+        return {
+          global: true,
+          secret: configService.get<string>('envConfig.jwt_secret'),
+        };
+      },
+      inject: [ConfigService],
+    }),
     ConfigModule.forRoot({
-      load: [envConfigObject],
-      cache: true,
-      isGlobal: true,
+      ...configOptionForRoot,
       validationSchema: JoiValidation,
       validationOptions: {
         abortEarly: false,
