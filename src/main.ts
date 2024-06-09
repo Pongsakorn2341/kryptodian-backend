@@ -1,21 +1,18 @@
 import { ValidationPipe, VersioningType } from '@nestjs/common';
-import { NestFactory } from '@nestjs/core';
+import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
-import { join } from 'path';
 import { AppModule } from './app.module';
+import { AllExceptionsFilter } from './common/exception/all-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     cors: true,
   });
 
-  // const httpAdapter = app.get(HttpAdapterHost);
+  const httpAdapter = app.get(HttpAdapterHost);
 
   app.setGlobalPrefix('api');
-  // app.useGlobalFilters(new AllExp(httpAdapter));
-  app.useStaticAssets(join(__dirname, '..', '..', 'uploads/'), {
-    prefix: '/uploads/',
-  });
+  app.useGlobalFilters(new AllExceptionsFilter(httpAdapter));
   app.enableVersioning({
     type: VersioningType.URI,
     defaultVersion: '1',
