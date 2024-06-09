@@ -3,10 +3,11 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TokenModule } from './token/token.module';
 import { ThrottlerModule } from '@nestjs/throttler';
-import { APP_GUARD } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD, HttpAdapterHost } from '@nestjs/core';
 import { ConfigModule } from '@nestjs/config';
 import { envConfigObject } from './common/config/env.config';
 import { JoiValidation } from './common/config/env.validation';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { JoiValidation } from './common/config/env.validation';
         limit: 100,
       },
     ]),
+    HttpModule,
     TokenModule,
   ],
   controllers: [AppController],
@@ -46,6 +48,10 @@ import { JoiValidation } from './common/config/env.validation';
     {
       provide: APP_GUARD,
       useClass: ThrottlerModule,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: HttpAdapterHost,
     },
   ],
 })
