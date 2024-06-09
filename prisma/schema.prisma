@@ -40,50 +40,63 @@ model User {
 
   is_active Boolean @default(true)
 
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
-  Coins      Coin[]
+  created_at DateTime    @default(now())
+  updated_at DateTime    @updatedAt
+  Portfolios Portfolio[]
 
   @@index([status, email, is_active])
   @@map("user")
-}
-
-model Coin {
-  id            String  @id @default(uuid())
-  thumbnail_url String
-  name          String
-  description   String?
-
-  reference_id String
-  network_id   String
-  address      String
-
-  created_by String
-
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
-
-  Creator User @relation(fields: [created_by], references: [id])
-
-  @@map("coin")
 }
 
 model Portfolio {
   id   String @id @default(uuid())
   name String
 
+  created_by String
+
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
+
+  User  User?  @relation(fields: [created_by], references: [id])
+  Coins Coin[]
 
   @@map("portfolio")
 }
 
-model Transaction {
+model Coin {
   id   String @id @default(uuid())
   name String
 
+  reference_id String
+  network_id   String
+  address      String
+
+  portfolio_id String
+
+  created_by String
+
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
+
+  Transaction Transaction[]
+  Portfolio   Portfolio     @relation(fields: [portfolio_id], references: [id])
+
+  @@map("coin")
+}
+
+model Transaction {
+  id String @id @default(uuid())
+
+  coin_id String
+
+  quantity Int
+  price    Float
+  total    Float
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  Coin Coin @relation(fields: [coin_id], references: [id])
 
   @@map("transaction")
 }
