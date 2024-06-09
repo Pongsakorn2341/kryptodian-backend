@@ -11,6 +11,10 @@ import { TokenModule } from './token/token.module';
 import { JoiValidation } from './common/config/env.validation';
 import { CacheModule } from '@nestjs/cache-manager';
 import { PrismaModule } from './prisma/prisma.module';
+import { AuthGuard } from './common/guards/auth.guard';
+import { RolesGuard } from './common/guards/role.guard';
+import { AuthModule } from './auth/auth.module';
+import { PortfolioModule } from './portfolio/portfolio.module';
 
 const configOptionForRoot = {
   load: [envConfigObject],
@@ -57,12 +61,22 @@ const configOptionForRoot = {
       },
     ]),
     HttpModule,
+    AuthModule,
     PrismaModule,
     TokenModule,
+    PortfolioModule,
   ],
   controllers: [AppController],
   providers: [
     AppService,
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
+    },
     {
       provide: APP_GUARD,
       useClass: ThrottlerModule,

@@ -4,6 +4,7 @@ import {
   HttpException,
   HttpStatus,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -53,7 +54,7 @@ export class AuthGuard implements CanActivate {
         id: request?.['user']?.id,
       },
     }); // TODO : check performance
-    if (!userData.is_active) {
+    if (!userData?.is_active) {
       throw new HttpException(`User is not active`, HttpStatus.FORBIDDEN);
     }
     return true;

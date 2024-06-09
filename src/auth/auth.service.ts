@@ -39,11 +39,9 @@ export class AuthService {
           email: signInDto.email,
         },
       });
-      this.logger.debug(
-        `Sign in user data : ${JSON.stringify(userData, null, 2)}`,
-        'signIn',
-      );
-      if (!userData) throw new NotFoundException();
+      if (!userData) {
+        throw new HttpException(`Invalid credential`, HttpStatus.BAD_REQUEST);
+      }
       const isMatch = await bcrypt.compare(
         signInDto.password,
         userData.password,
@@ -108,6 +106,11 @@ export class AuthService {
           email: registerDto.email,
           name: registerDto.name,
           password: hash,
+          Portfolios: {
+            create: {
+              name: 'My Portfolio', // * DEFAULT PORTS
+            },
+          },
         },
         select: {
           id: true,
