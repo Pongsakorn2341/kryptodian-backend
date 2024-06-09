@@ -4,16 +4,15 @@ import {
   HttpException,
   HttpStatus,
   Injectable,
-  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
-import { IS_PUBLIC_KEY } from '../decorators/auth.decorator';
-import { PrismaService } from 'src/prisma/prisma.service';
 import { IUserJwt } from 'src/common/decorators/current-user.decorators';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { IS_PUBLIC_KEY } from '../decorators/auth.decorator';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
