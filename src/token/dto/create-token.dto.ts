@@ -5,7 +5,7 @@ export class CreateTokenDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  network_name: string;
+  network_id: string;
 
   @ApiProperty()
   @IsString()

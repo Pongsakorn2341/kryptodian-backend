@@ -9,6 +9,8 @@ import { AppService } from './app.service';
 import { EnvConfigProps, envConfigObject } from './common/config/env.config';
 import { TokenModule } from './token/token.module';
 import { JoiValidation } from './common/config/env.validation';
+import { CacheModule } from '@nestjs/cache-manager';
+import { PrismaModule } from './prisma/prisma.module';
 
 const configOptionForRoot = {
   load: [envConfigObject],
@@ -18,15 +20,6 @@ const configOptionForRoot = {
 
 @Module({
   imports: [
-    JwtModule.registerAsync({
-      useFactory: (configService: ConfigService<EnvConfigProps>) => {
-        return {
-          global: true,
-          secret: configService.get<string>('envConfig.JWT_SECRET'),
-        };
-      },
-      inject: [ConfigService],
-    }),
     ConfigModule.forRoot({
       ...configOptionForRoot,
       validationSchema: JoiValidation,
@@ -35,6 +28,16 @@ const configOptionForRoot = {
         debug: true,
         stack: true,
       },
+    }),
+    CacheModule.register(),
+    JwtModule.registerAsync({
+      useFactory: (configService: ConfigService<EnvConfigProps>) => {
+        return {
+          global: true,
+          secret: configService.get<string>('envConfig.JWT_SECRET'),
+        };
+      },
+      inject: [ConfigService],
     }),
     ThrottlerModule.forRoot([
       {
@@ -54,6 +57,7 @@ const configOptionForRoot = {
       },
     ]),
     HttpModule,
+    PrismaModule,
     TokenModule,
   ],
   controllers: [AppController],
