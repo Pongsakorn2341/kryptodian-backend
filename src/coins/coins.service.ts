@@ -51,4 +51,26 @@ export class CoinsService {
     const lists = await this.findAll();
     return lists.find((item) => item.id == id);
   }
+
+  async getPrices(ids: string[]): Promise<IGeckoCoin[]> {
+    const query = new URLSearchParams({
+      ids: ids.join(','),
+      vs_currencies: 'btc',
+      include_24hr_change: 'true',
+    });
+    const cacheKey = `gecko-coin-price_${ids.join('-')}`;
+    const cacheData = await this.cacheService.getCache<IGeckoCoin[]>(cacheKey);
+    if (cacheData) {
+      return cacheData;
+    }
+
+    const url = `${this.geckoApiURL}/simple/price?${query.toString()}`;
+    const response = await firstValueFrom(
+      this.httpService.get<IGeckoCoin[]>(url, this.axiosConfig),
+    );
+    const result = response.data;
+    console.log('🚀 ~ CoinsService ~ getPrices ~ result:', result);
+    await this.cacheService.setCache(cacheKey, result);
+    return result;
+  }
 }
