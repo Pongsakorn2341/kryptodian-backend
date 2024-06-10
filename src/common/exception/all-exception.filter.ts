@@ -68,25 +68,11 @@ export class AllExceptionsFilter implements ExceptionFilter {
         '🚀 ~ AllExceptionsFilter ~ exceptionResponse:',
         exceptionResponse,
       );
-      if (
-        exceptionResponse instanceof Object &&
-        'message' in exceptionResponse &&
-        Array.isArray(exceptionResponse.message)
-      ) {
-        rest.cause = exceptionResponse.message.join(',');
-        rest.message = 'Bad Request';
-      } else {
-        rest.cause =
-          typeof (exception as any).response == 'string'
-            ? (exception as any).response
-            : (exception as any).response.message;
-        rest.message = (exception as any).name;
-        httpStatus = (exception as any).status as number | 0;
-      }
       this.logger.debug(`${request.method}: ${request.url}`);
     } else {
       const result = handleError(exception);
-      rest.cause = result.cause ? result.cause : exception;
+      rest.cause =
+        typeof result.cause == 'string' ? result.cause : result.message;
       rest.message = result.message ? result.message : (exception as string);
       httpStatus = result.code;
     }

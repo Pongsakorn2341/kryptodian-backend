@@ -40,6 +40,10 @@ export class PortfolioService {
         Coins: true,
       },
     });
+    if (!portDat) {
+      throw new Error(`Portfolio is not found`);
+    }
+    console.log('🚀 ~ PortfolioService ~ findOne ~ portDat:', portDat);
     const coins = await Promise.all(
       portDat.Coins.map(async (coinData) => {
         const _coinData = { ...coinData, coinData: null };
