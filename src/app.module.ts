@@ -15,6 +15,7 @@ import { AuthGuard } from './common/guards/auth.guard';
 import { RolesGuard } from './common/guards/role.guard';
 import { AuthModule } from './auth/auth.module';
 import { PortfolioModule } from './portfolio/portfolio.module';
+import { CoinsModule } from './coins/coins.module';
 
 const configOptionForRoot = {
   load: [envConfigObject],
@@ -65,6 +66,7 @@ const configOptionForRoot = {
     PrismaModule,
     TokenModule,
     PortfolioModule,
+    CoinsModule,
   ],
   controllers: [AppController],
   providers: [
