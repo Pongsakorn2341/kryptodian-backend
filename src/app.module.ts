@@ -9,13 +9,13 @@ import { AppService } from './app.service';
 import { EnvConfigProps, envConfigObject } from './common/config/env.config';
 import { TokenModule } from './token/token.module';
 import { JoiValidation } from './common/config/env.validation';
-import { CacheModule } from '@nestjs/cache-manager';
 import { PrismaModule } from './prisma/prisma.module';
 import { AuthGuard } from './common/guards/auth.guard';
 import { RolesGuard } from './common/guards/role.guard';
 import { AuthModule } from './auth/auth.module';
 import { PortfolioModule } from './portfolio/portfolio.module';
 import { CoinsModule } from './coins/coins.module';
+import { CacheModule } from './cache/cache.module';
 
 const configOptionForRoot = {
   load: [envConfigObject],
@@ -25,6 +25,7 @@ const configOptionForRoot = {
 
 @Module({
   imports: [
+    CacheModule,
     ConfigModule.forRoot({
       ...configOptionForRoot,
       validationSchema: JoiValidation,
@@ -34,7 +35,6 @@ const configOptionForRoot = {
         stack: true,
       },
     }),
-    CacheModule.register(),
     JwtModule.registerAsync({
       useFactory: (configService: ConfigService<EnvConfigProps>) => {
         return {

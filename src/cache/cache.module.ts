@@ -6,6 +6,7 @@ import { CacheService } from './cache.service';
 @Module({
   controllers: [],
   providers: [CacheService],
+  exports: [CacheService],
   imports: [
     CacheManagerModule.registerAsync({
       useFactory: async () => {
@@ -18,6 +19,5 @@ import { CacheService } from './cache.service';
       inject: [ConfigService],
     }),
   ],
-  exports: [CacheService],
 })
 export class CacheModule {}

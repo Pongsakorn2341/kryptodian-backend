@@ -69,7 +69,6 @@ export class CoinsService {
       this.httpService.get<IGeckoCoin[]>(url, this.axiosConfig),
     );
     const result = response.data;
-    console.log('🚀 ~ CoinsService ~ getPrices ~ result:', result);
     await this.cacheService.setCache(cacheKey, result);
     return result;
   }

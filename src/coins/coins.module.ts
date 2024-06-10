@@ -1,13 +1,12 @@
-import { Module } from '@nestjs/common';
-import { CoinsService } from './coins.service';
-import { CoinsController } from './coins.controller';
-import { CacheModule } from '@nestjs/cache-manager';
 import { HttpModule } from '@nestjs/axios';
-import { CacheService } from 'src/cache/cache.service';
+import { Module } from '@nestjs/common';
+import { CacheModule } from 'src/cache/cache.module';
+import { CoinsController } from './coins.controller';
+import { CoinsService } from './coins.service';
 
 @Module({
-  imports: [HttpModule, CacheModule.register()],
+  imports: [HttpModule, CacheModule],
   controllers: [CoinsController],
-  providers: [CoinsService, CacheService],
+  providers: [CoinsService],
 })
 export class CoinsModule {}

@@ -3,11 +3,13 @@ import { CreatePortfolioDto } from './dto/create-portfolio.dto';
 import { UpdatePortfolioDto } from './dto/update-portfolio.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { TokenService } from 'src/token/token.service';
+import { CoinsService } from 'src/coins/coins.service';
 
 @Injectable()
 export class PortfolioService {
   constructor(
     private readonly prismaService: PrismaService,
+    private readonly coinService: CoinsService,
     private readonly tokenSerivce: TokenService,
   ) {}
 
@@ -43,10 +45,9 @@ export class PortfolioService {
     if (!portDat) {
       throw new Error(`Portfolio is not found`);
     }
-    console.log('🚀 ~ PortfolioService ~ findOne ~ portDat:', portDat);
     const coins = await Promise.all(
       portDat.Coins.map(async (coinData) => {
-        const _coinData = { ...coinData, coinData: null };
+        const _coinData = { ...coinData, coinData: null, priceChange: null };
         _coinData.coinData = await this.tokenSerivce.getCoinData(
           userId,
           portDat.id,
