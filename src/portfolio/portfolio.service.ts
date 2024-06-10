@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { CreatePortfolioDto } from './dto/create-portfolio.dto';
-import { UpdatePortfolioDto } from './dto/update-portfolio.dto';
+import { CoinsService } from 'src/coins/coins.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { TokenService } from 'src/token/token.service';
-import { CoinsService } from 'src/coins/coins.service';
+import { CreatePortfolioDto } from './dto/create-portfolio.dto';
+import { UpdatePortfolioDto } from './dto/update-portfolio.dto';
 
 @Injectable()
 export class PortfolioService {
@@ -48,12 +48,16 @@ export class PortfolioService {
     const coins = await Promise.all(
       portDat.Coins.map(async (coinData) => {
         const _coinData = { ...coinData, coinData: null, priceChange: null };
-        _coinData.coinData = await this.tokenSerivce.getCoinData(
+        const coinAttribute = await this.tokenSerivce.getCoinData(
           userId,
           portDat.id,
           coinData.network_id,
           coinData.address,
         );
+        _coinData.coinData = coinAttribute;
+        _coinData.priceChange = await this.coinService.getPrices([
+          coinAttribute?.attributes?.coingecko_coin_id,
+        ]);
         return _coinData;
       }),
     );
