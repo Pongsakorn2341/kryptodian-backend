@@ -39,12 +39,7 @@ export class TokenService {
     },
   };
 
-  async getCoinData(
-    userId: string,
-    portfolioId: string,
-    networkId: string,
-    address: string,
-  ): Promise<IGeckoToken> {
+  async getCoinData(networkId: string, address: string): Promise<IGeckoToken> {
     const tokenCacheKey = `gecko-token-${networkId}-${address}`;
     const cacheVal = await this.cacheService.getCache(tokenCacheKey);
     if (cacheVal) {
@@ -90,8 +85,6 @@ export class TokenService {
     }
 
     const coinData = await this.getCoinData(
-      userId,
-      createTokenDto.portfolio_id,
       createTokenDto.network_id,
       createTokenDto.address,
     );

@@ -58,8 +58,6 @@ export class PortfolioService {
       portDat.Coins.map(async (coinData) => {
         const _coinData = { ...coinData, coinData: null, priceChange: null };
         const coinAttribute = await this.tokenSerivce.getCoinData(
-          userId,
-          portDat.id,
           coinData.network_id,
           coinData.address,
         );
