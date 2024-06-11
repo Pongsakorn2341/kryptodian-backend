@@ -4,6 +4,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { TokenService } from 'src/token/token.service';
 import { CreatePortfolioDto } from './dto/create-portfolio.dto';
 import { UpdatePortfolioDto } from './dto/update-portfolio.dto';
+import { handleError } from 'src/common/utils/helper';
 
 @Injectable()
 export class PortfolioService {
@@ -14,6 +15,14 @@ export class PortfolioService {
   ) {}
 
   async create(userId: string, createPortfolioDto: CreatePortfolioDto) {
+    const currentPorts = await this.prismaService.portfolio.count({
+      where: {
+        created_by: userId,
+      },
+    });
+    if (currentPorts >= 5) {
+      throw new Error(`Maximum Portfolio is 5`);
+    }
     const result = await this.prismaService.portfolio.create({
       data: {
         name: createPortfolioDto.name,
@@ -92,21 +101,25 @@ export class PortfolioService {
   }
 
   async remove(userId: string, id: string) {
-    const portData = await this.prismaService.portfolio.findUnique({
-      where: {
-        id: id,
-        created_by: userId,
-      },
-    });
-    if (!portData) {
-      throw new Error(`Portfolio is not found or you're not owned.`);
+    try {
+      const portData = await this.prismaService.portfolio.findUnique({
+        where: {
+          id: id,
+          created_by: userId,
+        },
+      });
+      if (!portData) {
+        throw new Error(`Portfolio is not found or you're not owned.`);
+      }
+      const result = await this.prismaService.portfolio.delete({
+        where: {
+          id: id,
+          created_by: userId,
+        },
+      });
+      return result;
+    } catch (e) {
+      handleError(e, { isThrowError: true });
     }
-    const result = await this.prismaService.portfolio.delete({
-      where: {
-        id: id,
-        created_by: userId,
-      },
-    });
-    return result;
   }
 }

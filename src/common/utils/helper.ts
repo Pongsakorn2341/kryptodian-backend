@@ -54,7 +54,6 @@ export const handleError = (
     logger.fatal(`Axios Error : ${axiosError.code}`);
     logger.error(errorObject);
     const geckoError = (errorObject as any)?.status?.error_message;
-    console.log('🚀 ~ geckoError:', geckoError);
     if (typeof geckoError == 'string') {
       response.cause = geckoError;
     } else {

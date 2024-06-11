@@ -57,27 +57,6 @@ export class TokenService {
     const res = getCoinData?.data?.data;
     const cacheTTL = 5 * 60 * 1000;
     await this.cacheService.setCache(tokenCacheKey, res, cacheTTL);
-
-    const coinData = await this.prismaService.coin.findFirst({
-      where: {
-        network_id: networkId,
-        address: address,
-        created_by: userId,
-      },
-    });
-    if (!coinData) {
-      await this.prismaService.coin.create({
-        data: {
-          name: res.attributes.name,
-          reference_id: networkId,
-          network_id: networkId,
-          address: address,
-          portfolio_id: portfolioId,
-          created_by: userId,
-        },
-      });
-    }
-
     return res;
   }
 
@@ -116,6 +95,27 @@ export class TokenService {
       createTokenDto.network_id,
       createTokenDto.address,
     );
+
+    const coinRecord = await this.prismaService.coin.findFirst({
+      where: {
+        portfolio_id: userId,
+        network_id: createTokenDto.network_id,
+        address: createTokenDto.address,
+        created_by: userId,
+      },
+    });
+    if (!coinRecord) {
+      await this.prismaService.coin.create({
+        data: {
+          name: coinData.attributes.name,
+          reference_id: createTokenDto.network_id,
+          network_id: createTokenDto.network_id,
+          address: createTokenDto.address,
+          portfolio_id: createTokenDto.portfolio_id,
+          created_by: userId,
+        },
+      });
+    }
 
     return coinData;
   }

@@ -81,6 +81,7 @@ model Coin {
   Transaction Transaction[]
   Portfolio   Portfolio     @relation(fields: [portfolio_id], references: [id])
 
+  @@unique([network_id, address, created_by, portfolio_id])
   @@map("coin")
 }
 
