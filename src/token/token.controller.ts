@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import {
   CurrentUser,
@@ -22,5 +22,10 @@ export class TokenController {
     @CurrentUser() userData: IUserJwt,
   ) {
     return this.tokenService.create(userData.id, createTokenDto);
+  }
+
+  @Get('/network')
+  listNetworks() {
+    return this.tokenService.retriveNetworkList();
   }
 }

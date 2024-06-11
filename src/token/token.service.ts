@@ -120,17 +120,24 @@ export class TokenService {
     return coinData;
   }
 
-  private async retriveNetworkList(): Promise<IGeckoNetwork[]> {
-    const url = `${this.geckoApiURL}/onchain/networks`;
+  async getNetworks(page: number): Promise<IGeckoNetwork[]> {
+    const url = `${this.geckoApiURL}/onchain/networks?page=${page}`;
+    const response = await firstValueFrom(
+      this.httpService.get<IGeckoNetworkResponse>(url, this.axiosConfig),
+    );
+    const result = response.data.data;
+    return result;
+  }
+
+  async retriveNetworkList(): Promise<IGeckoNetwork[]> {
     const cacheName = `gecko-network-list`;
     const cacheData = await this.cacheService.getCache(cacheName);
     if (cacheData) {
       return cacheData;
     }
-    const response = await firstValueFrom(
-      this.httpService.get<IGeckoNetworkResponse>(url, this.axiosConfig),
-    );
-    const result = response.data.data;
+    const firstNetwork = await this.getNetworks(1);
+    const secondNetwork = await this.getNetworks(2);
+    const result = [...firstNetwork, ...secondNetwork];
     const cacheTTL = 1 * 60 * 60 * 1000;
     await this.cacheService.setCache(cacheName, result, cacheTTL);
     return result;
