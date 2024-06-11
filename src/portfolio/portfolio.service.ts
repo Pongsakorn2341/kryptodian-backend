@@ -122,4 +122,30 @@ export class PortfolioService {
       handleError(e, { isThrowError: true });
     }
   }
+
+  async removeCoin(userId: string, portId: string, coinId: string) {
+    try {
+      const portData = await this.prismaService.portfolio.findUnique({
+        where: {
+          id: portId,
+          created_by: userId,
+        },
+      });
+      if (!portData) {
+        throw new Error(`Portfolio is not found`);
+      }
+      const coinData = await this.prismaService.coin.delete({
+        where: {
+          id: coinId,
+          created_by: userId,
+        },
+      });
+      if (!coinData) {
+        throw new Error(`Remove coin from ${portData.name} failed.`);
+      }
+      return coinData;
+    } catch (e) {
+      handleError(e, { isThrowError: true });
+    }
+  }
 }

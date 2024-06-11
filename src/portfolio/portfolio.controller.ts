@@ -56,4 +56,13 @@ export class PortfolioController {
   remove(@Param('id') id: string, @CurrentUser() userData: IUserJwt) {
     return this.portfolioService.remove(userData.id, id);
   }
+
+  @Delete(':portId/coin/:coinId')
+  removeCoin(
+    @Param('portId') portId: string,
+    @Param('coinId') coinId: string,
+    @CurrentUser() userData: IUserJwt,
+  ) {
+    return this.portfolioService.removeCoin(userData.id, portId, coinId);
+  }
 }
