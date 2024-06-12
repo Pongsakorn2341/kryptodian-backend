@@ -29,6 +29,11 @@ enum EDataProvider {
   COIN_MARKET_CAP
 }
 
+enum EAction {
+  BUY
+  SELL
+}
+
 model User {
   id            String      @id @default(uuid())
   email         String      @unique
@@ -40,9 +45,10 @@ model User {
 
   is_active Boolean @default(true)
 
-  created_at DateTime    @default(now())
-  updated_at DateTime    @updatedAt
-  Portfolios Portfolio[]
+  created_at  DateTime      @default(now())
+  updated_at  DateTime      @updatedAt
+  Portfolios  Portfolio[]
+  Transaction Transaction[]
 
   @@index([status, email, is_active])
   @@map("user")
@@ -57,8 +63,9 @@ model Portfolio {
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
-  User  User?  @relation(fields: [created_by], references: [id])
-  Coins Coin[]
+  User        User?         @relation(fields: [created_by], references: [id])
+  Coins       Coin[]
+  Transaction Transaction[]
 
   @@map("portfolio")
 }
@@ -85,19 +92,35 @@ model Coin {
   @@map("coin")
 }
 
+model Currency {
+  id   String @id @default(uuid())
+  name String
+
+  Transaction Transaction[]
+}
+
 model Transaction {
   id String @id @default(uuid())
 
-  coin_id String
+  coin_id      String
+  portfolio_id String
 
-  quantity Int
-  price    Float
-  total    Float
+  amount      Int
+  currency_id String
+  price       Float
+  total       Float
 
+  action_at DateTime
+  action    EAction
+
+  created_by String
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
-  Coin Coin @relation(fields: [coin_id], references: [id])
+  User      User      @relation(fields: [created_by], references: [id])
+  Coin      Coin      @relation(fields: [coin_id], references: [id])
+  Currency  Currency  @relation(fields: [currency_id], references: [id])
+  Portfolio Portfolio @relation(fields: [portfolio_id], references: [id])
 
   @@map("transaction")
 }

@@ -16,6 +16,7 @@ import { AuthModule } from './auth/auth.module';
 import { PortfolioModule } from './portfolio/portfolio.module';
 import { CoinsModule } from './coins/coins.module';
 import { CacheModule } from './cache/cache.module';
+import { TransactionModule } from './transaction/transaction.module';
 
 const configOptionForRoot = {
   load: [envConfigObject],
@@ -67,6 +68,7 @@ const configOptionForRoot = {
     TokenModule,
     PortfolioModule,
     CoinsModule,
+    TransactionModule,
   ],
   controllers: [AppController],
   providers: [
