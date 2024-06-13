@@ -5,6 +5,7 @@ import { AxiosRequestConfig } from 'axios';
 import { firstValueFrom } from 'rxjs';
 import { CacheService } from 'src/cache/cache.service';
 import { EnvConfigProps } from 'src/common/config/env.config';
+import { IGeckoCoin } from 'src/common/types/coin-gecko/coin';
 import {
   IGeckoNetwork,
   IGeckoNetworkResponse,
@@ -73,6 +74,27 @@ export class GeckoService {
 
     const cacheTTL = 1 * 60 * 60 * 1000;
     await this.cacheService.setCache(cacheName, result, cacheTTL);
+    return result;
+  }
+
+  async getPriceTicker(geckoCoinId: number[]) {
+    const query = new URLSearchParams({
+      ids: geckoCoinId.join(','),
+      vs_currencies: 'btc',
+      include_24hr_change: 'true',
+    });
+    const cacheKey = `gecko-coin-price_${geckoCoinId.join('-')}`;
+    const cacheData = await this.cacheService.getCache<IGeckoCoin[]>(cacheKey);
+    if (cacheData) {
+      return cacheData;
+    }
+
+    const url = `${this.geckoApiURL}/simple/price?${query.toString()}`;
+    const response = await firstValueFrom(
+      this.httpService.get<IGeckoCoin[]>(url, this.axiosConfig),
+    );
+    const result = response.data;
+    await this.cacheService.setCache(cacheKey, result);
     return result;
   }
 }

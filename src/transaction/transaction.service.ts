@@ -52,6 +52,9 @@ export class TransactionService {
     if (dto.portfolio_id) {
       whereCause.portfolio_id = dto.portfolio_id;
     }
+    if (dto.coin_id) {
+      whereCause.coin_id = dto.coin_id;
+    }
     const transactions = await this.prismaService.transaction.findMany({
       where: whereCause,
     });

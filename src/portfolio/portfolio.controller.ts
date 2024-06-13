@@ -37,7 +37,10 @@ export class PortfolioController {
 
   @Post('/add-coin')
   @ApiOperation({ summary: `Add coin in portfolio` })
-  async addCoin(@CurrentUser() userData: IUserJwt, addCoinDto: AddCoinDto) {
+  async addCoin(
+    @CurrentUser() userData: IUserJwt,
+    @Body() addCoinDto: AddCoinDto,
+  ) {
     return this.portfolioService.addCoin(userData.id, addCoinDto);
   }
 

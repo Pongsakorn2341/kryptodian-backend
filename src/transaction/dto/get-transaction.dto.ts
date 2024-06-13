@@ -6,4 +6,9 @@ export class FindManyTransactionDto {
   @IsString()
   @IsOptional()
   portfolio_id?: string;
+
+  @ApiProperty({ required: false })
+  @IsString()
+  @IsOptional()
+  coin_id?: string;
 }
