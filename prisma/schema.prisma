@@ -118,7 +118,7 @@ model Transaction {
   updated_at DateTime @updatedAt
 
   User      User      @relation(fields: [created_by], references: [id])
-  Coin      Coin      @relation(fields: [coin_id], references: [id])
+  Coin      Coin      @relation(fields: [coin_id], references: [id], onDelete: Cascade)
   // Currency  Currency  @relation(fields: [currency_id], references: [id])
   Portfolio Portfolio @relation(fields: [portfolio_id], references: [id])
 
