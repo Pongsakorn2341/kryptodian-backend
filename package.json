@@ -1,8 +1,8 @@
 {
   "name": "kryptodian-backend",
   "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "description": "This project is created for testing Kryptodian",
+  "author": "Pongsakorn Dev",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {

@@ -66,10 +66,11 @@ export class GeckoService {
     }
     let result = [];
     const totalNetworkPage = 2;
-    new Array(totalNetworkPage).forEach(async (element, idx) => {
+    for (let idx = 0; idx < totalNetworkPage; idx++) {
       const _r = await this.getNetworks(idx + 1);
       result = [...result, ..._r];
-    });
+    }
+
     const cacheTTL = 1 * 60 * 60 * 1000;
     await this.cacheService.setCache(cacheName, result, cacheTTL);
     return result;
