@@ -33,7 +33,7 @@ export class TransactionService {
       data: {
         action: createTransactionDto.action,
         action_at: createTransactionDto.action_date,
-        currency_id: createTransactionDto.currency_id,
+        // currency_id: createTransactionDto.currency_id,
         coin_id: coinData.id,
         amount: createTransactionDto.amount,
         price: createTransactionDto.price,
@@ -79,7 +79,7 @@ export class TransactionService {
       data: {
         action: updateTransactionDto.action,
         action_at: updateTransactionDto.action_date,
-        currency_id: updateTransactionDto.currency_id,
+        // currency_id: updateTransactionDto.currency_id,
         amount: updateTransactionDto.amount,
         price: updateTransactionDto.price,
         total: updateTransactionDto.amount * updateTransactionDto.price,

@@ -43,8 +43,8 @@ export class CreateTransactionDto {
   @IsNotEmpty()
   amount: number;
 
-  @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
-  currency_id: string;
+  // @ApiProperty()
+  // @IsString()
+  // @IsNotEmpty()
+  // currency_id: string;
 }

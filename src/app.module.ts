@@ -17,6 +17,7 @@ import { PortfolioModule } from './portfolio/portfolio.module';
 import { CoinsModule } from './coins/coins.module';
 import { CacheModule } from './cache/cache.module';
 import { TransactionModule } from './transaction/transaction.module';
+import { CryptoProviderModule } from './crypto-provider/crypto-provider.module';
 
 const configOptionForRoot = {
   load: [envConfigObject],
@@ -69,6 +70,7 @@ const configOptionForRoot = {
     PortfolioModule,
     CoinsModule,
     TransactionModule,
+    CryptoProviderModule,
   ],
   controllers: [AppController],
   providers: [
