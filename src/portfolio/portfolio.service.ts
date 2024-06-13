@@ -1,17 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { CoinsService } from 'src/coins/coins.service';
+import { handleError } from 'src/common/utils/helper';
+import { CryptoProviderService } from 'src/crypto-provider/crypto-provider.service';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { TokenService } from 'src/token/token.service';
+import { AddCoinDto } from './dto/add-coin.dto';
 import { CreatePortfolioDto } from './dto/create-portfolio.dto';
 import { UpdatePortfolioDto } from './dto/update-portfolio.dto';
-import { handleError } from 'src/common/utils/helper';
 
 @Injectable()
 export class PortfolioService {
   constructor(
     private readonly prismaService: PrismaService,
     private readonly coinService: CoinsService,
-    private readonly tokenSerivce: TokenService,
+    private readonly cryptoProvider: CryptoProviderService,
   ) {}
 
   async create(userId: string, createPortfolioDto: CreatePortfolioDto) {
@@ -57,9 +58,8 @@ export class PortfolioService {
     const coins = await Promise.all(
       portDat.Coins.map(async (coinData) => {
         const _coinData = { ...coinData, coinData: null, priceChange: null };
-        const coinAttribute = await this.tokenSerivce.getCoinData(
-          coinData.network_id,
-          coinData.address,
+        const coinAttribute = await this.cryptoProvider.getCoinData(
+          coinData.id,
         );
         _coinData.coinData = coinAttribute;
         _coinData.priceChange = await this.coinService.getPrices([
@@ -145,5 +145,63 @@ export class PortfolioService {
     } catch (e) {
       handleError(e, { isThrowError: true });
     }
+  }
+
+  async addCoin(userId: string, addCoinDto: AddCoinDto) {
+    const portfolioData = await this.prismaService.portfolio.findUnique({
+      where: {
+        id: addCoinDto.portfolio_id,
+      },
+      include: {
+        Coins: true,
+      },
+    });
+    if (!portfolioData) {
+      throw new Error(`Portfolio is not found.`);
+    }
+    const isAdded = portfolioData.Coins.find(
+      (item) =>
+        item.network_id == addCoinDto.network_id &&
+        item.address == addCoinDto.address,
+    );
+    if (isAdded) {
+      throw new Error(`This coin is already added`);
+    }
+
+    const response = await this.cryptoProvider.getNetworks();
+    const isNetworkNameAvailable = response.find(
+      (item) => item.id == addCoinDto.network_id,
+    );
+    if (!isNetworkNameAvailable) {
+      throw new Error(`${addCoinDto.network_id} network is not avaiable.`);
+    }
+
+    const coinData = await this.cryptoProvider.getCoinDataByNetwork(
+      addCoinDto.network_id,
+      addCoinDto.address,
+    );
+
+    const coinRecord = await this.prismaService.coin.findFirst({
+      where: {
+        portfolio_id: userId,
+        network_id: addCoinDto.network_id,
+        address: addCoinDto.address,
+        created_by: userId,
+      },
+    });
+    if (!coinRecord) {
+      await this.prismaService.coin.create({
+        data: {
+          name: coinData.attributes.name,
+          reference_id: addCoinDto.network_id,
+          network_id: addCoinDto.network_id,
+          address: addCoinDto.address,
+          portfolio_id: addCoinDto.portfolio_id,
+          created_by: userId,
+        },
+      });
+    }
+
+    return coinData;
   }
 }

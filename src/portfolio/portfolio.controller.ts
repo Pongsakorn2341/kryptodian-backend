@@ -1,20 +1,21 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
 } from '@nestjs/common';
-import { PortfolioService } from './portfolio.service';
-import { CreatePortfolioDto } from './dto/create-portfolio.dto';
-import { UpdatePortfolioDto } from './dto/update-portfolio.dto';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import {
   CurrentUser,
   IUserJwt,
 } from 'src/common/decorators/current-user.decorators';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { AddCoinDto } from './dto/add-coin.dto';
+import { CreatePortfolioDto } from './dto/create-portfolio.dto';
+import { UpdatePortfolioDto } from './dto/update-portfolio.dto';
+import { PortfolioService } from './portfolio.service';
 
 @Controller({
   version: '1',
@@ -31,6 +32,11 @@ export class PortfolioController {
     @CurrentUser() userData: IUserJwt,
   ) {
     return this.portfolioService.create(userData.id, createPortfolioDto);
+  }
+
+  @Post('/add')
+  async addCoin(@CurrentUser() userData: IUserJwt, addCoinDto: AddCoinDto) {
+    return this.portfolioService.addCoin(userData.id, addCoinDto);
   }
 
   @Get()

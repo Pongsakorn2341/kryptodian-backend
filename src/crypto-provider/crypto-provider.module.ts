@@ -1,11 +1,13 @@
+import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
-import { CryptoProviderService } from './crypto-provider.service';
-import { CryptoProviderController } from './crypto-provider.controller';
-import { GeckoService } from './gecko/gecko.service';
+import { CacheModule } from 'src/cache/cache.module';
 import { CoinMarketCapService } from './coin-marketcap/coin-marketcap.service';
+import { CryptoProviderService } from './crypto-provider.service';
+import { GeckoService } from './gecko/gecko.service';
 
 @Module({
-  controllers: [CryptoProviderController],
+  imports: [HttpModule, CacheModule],
   providers: [CryptoProviderService, GeckoService, CoinMarketCapService],
+  exports: [CryptoProviderModule],
 })
 export class CryptoProviderModule {}

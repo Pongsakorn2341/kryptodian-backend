@@ -6,18 +6,17 @@ import { JwtModule } from '@nestjs/jwt';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { AuthModule } from './auth/auth.module';
+import { CacheModule } from './cache/cache.module';
+import { CoinsModule } from './coins/coins.module';
 import { EnvConfigProps, envConfigObject } from './common/config/env.config';
-import { TokenModule } from './token/token.module';
 import { JoiValidation } from './common/config/env.validation';
-import { PrismaModule } from './prisma/prisma.module';
 import { AuthGuard } from './common/guards/auth.guard';
 import { RolesGuard } from './common/guards/role.guard';
-import { AuthModule } from './auth/auth.module';
-import { PortfolioModule } from './portfolio/portfolio.module';
-import { CoinsModule } from './coins/coins.module';
-import { CacheModule } from './cache/cache.module';
-import { TransactionModule } from './transaction/transaction.module';
 import { CryptoProviderModule } from './crypto-provider/crypto-provider.module';
+import { PortfolioModule } from './portfolio/portfolio.module';
+import { PrismaModule } from './prisma/prisma.module';
+import { TransactionModule } from './transaction/transaction.module';
 
 const configOptionForRoot = {
   load: [envConfigObject],
@@ -66,7 +65,6 @@ const configOptionForRoot = {
     HttpModule,
     AuthModule,
     PrismaModule,
-    TokenModule,
     PortfolioModule,
     CoinsModule,
     TransactionModule,
