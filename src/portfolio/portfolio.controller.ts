@@ -7,7 +7,7 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import {
   CurrentUser,
   IUserJwt,
@@ -27,6 +27,7 @@ export class PortfolioController {
   constructor(private readonly portfolioService: PortfolioService) {}
 
   @Post()
+  @ApiOperation({ summary: `Create Portfolio` })
   create(
     @Body() createPortfolioDto: CreatePortfolioDto,
     @CurrentUser() userData: IUserJwt,
@@ -34,22 +35,26 @@ export class PortfolioController {
     return this.portfolioService.create(userData.id, createPortfolioDto);
   }
 
-  @Post('/add')
+  @Post('/add-coin')
+  @ApiOperation({ summary: `Add coin in portfolio` })
   async addCoin(@CurrentUser() userData: IUserJwt, addCoinDto: AddCoinDto) {
     return this.portfolioService.addCoin(userData.id, addCoinDto);
   }
 
   @Get()
+  @ApiOperation({ summary: `List all Portfolio` })
   findAll(@CurrentUser() userData: IUserJwt) {
     return this.portfolioService.findAll(userData.id);
   }
 
   @Get(':id')
+  @ApiOperation({ summary: `Get Portfolio` })
   findOne(@Param('id') id: string, @CurrentUser() userData: IUserJwt) {
     return this.portfolioService.findOne(userData.id, id);
   }
 
   @Patch(':id')
+  @ApiOperation({ summary: `Update Portfolio` })
   update(
     @Param('id') id: string,
     @Body() updatePortfolioDto: UpdatePortfolioDto,
@@ -59,11 +64,13 @@ export class PortfolioController {
   }
 
   @Delete(':id')
+  @ApiOperation({ summary: `Delete Portfolio` })
   remove(@Param('id') id: string, @CurrentUser() userData: IUserJwt) {
     return this.portfolioService.remove(userData.id, id);
   }
 
   @Delete(':portId/coin/:coinId')
+  @ApiOperation({ summary: `Remove coin from portfolio` })
   removeCoin(
     @Param('portId') portId: string,
     @Param('coinId') coinId: string,
