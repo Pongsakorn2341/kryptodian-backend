@@ -1,0 +1,137 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum EUserRole {
+  SUPER_ADMIN
+  ADMIN
+  USER
+}
+
+enum EUserStatus {
+  DEMO
+  COMMERCIAL
+}
+
+enum EDataProvider {
+  COIN_GECKO
+  COIN_MARKET_CAP
+}
+
+enum EAction {
+  BUY
+  SELL
+}
+
+model User {
+  id            String      @id @default(uuid())
+  email         String      @unique
+  name          String
+  profile_image String?
+  password      String
+  status        EUserStatus @default(DEMO)
+  role          EUserRole   @default(USER)
+
+  is_active Boolean @default(true)
+
+  created_at  DateTime      @default(now())
+  updated_at  DateTime      @updatedAt
+  Portfolios  Portfolio[]
+  Transaction Transaction[]
+
+  @@index([status, email, is_active])
+  @@map("user")
+}
+
+model Portfolio {
+  id   String @id @default(uuid())
+  name String
+
+  created_by String
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  User        User?         @relation(fields: [created_by], references: [id])
+  Coins       Coin[]
+  Transaction Transaction[]
+
+  @@map("portfolio")
+}
+
+model Coin {
+  id   String @id @default(uuid())
+  name String
+
+  reference_id String
+  network_id   String
+  address      String
+
+  portfolio_id String
+
+  created_by String
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  Transaction Transaction[]
+  Portfolio   Portfolio     @relation(fields: [portfolio_id], references: [id])
+
+  @@unique([network_id, address, created_by, portfolio_id])
+  @@map("coin")
+}
+
+// model Currency {
+//   id   String @id @default(uuid())
+//   name String
+
+//   Transaction Transaction[]
+// }
+
+model Transaction {
+  id String @id @default(uuid())
+
+  coin_id      String
+  portfolio_id String
+
+  amount Int
+  // currency_id String
+  price  Float
+  total  Float
+
+  action_at DateTime
+  action    EAction
+
+  created_by String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  User      User      @relation(fields: [created_by], references: [id])
+  Coin      Coin      @relation(fields: [coin_id], references: [id], onDelete: Cascade)
+  // Currency  Currency  @relation(fields: [currency_id], references: [id])
+  Portfolio Portfolio @relation(fields: [portfolio_id], references: [id])
+
+  @@map("transaction")
+}
+
+model DataProvider {
+  id   String        @id @default(uuid())
+  name String
+  type EDataProvider @default(COIN_GECKO)
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@map("data_provider")
+}
