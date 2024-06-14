@@ -34,10 +34,6 @@ Make sure you have installed all of the following prerequisites on your developm
     │   └── docker-compose.yml          # docker file for start web application
 
 
-
-
-
-
 ## Installation
 
 ```bash
@@ -94,6 +90,24 @@ $ yarn run start:prod
 
 ## Diagram
 ![Diagram](./kryptodian-diagram.jpg)
+
+
+## Explanation
+
+* `User` Table
+This table is created for store user account which including the email, name, password and others filed for register, sign-in
+
+* `Portfolio` Table
+This table is created for store the portfolio list which including the name and creator.
+
+* `Coin` Table
+This including the cryptocurrencies coin that user holds on which portfolio
+
+* `Transaction` Table
+This table is creating for user who wants to add transaction that buy or sell in the previously.
+
+> Currently this web application use only 1 data provider which is an CoinGecko
+> This web application is not including the Test Case Scenario
 
 ## Contact
 
