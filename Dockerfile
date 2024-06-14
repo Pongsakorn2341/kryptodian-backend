@@ -62,4 +62,5 @@ COPY . .
 EXPOSE 4444
 
 # Start the server using the production build
-CMD [ "yarn", "start" ]
+# CMD [ "yarn", "start" ]
+ENTRYPOINT ["sh", "entrypoint.sh"]
